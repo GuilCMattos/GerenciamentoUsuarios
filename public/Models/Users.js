@@ -150,7 +150,7 @@ class User {
 
     remove(){
      
-        return HttpRequest.delete(`/user/${this.id}`);
+        return HttpRequest.delete(`/users/${this.id}`);
     }
 
 }

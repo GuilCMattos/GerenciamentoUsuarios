@@ -70,7 +70,7 @@ class User {
                 break;
 
                 default: 
-                this[name] = json[name]
+               if (name.substring(0, 1) === '_') this[name] = json[name]
             }
 
         }
@@ -105,56 +105,52 @@ class User {
 
     }
 
+    toJSON() { 
+
+        let json = {};
+
+        Object.keys(this).forEach(key => { 
+
+           if(this[key] !== undefined) json[key] = this[key];
+        })
+
+        return json;
+    }
+
 
     save() { 
 
-        let users = User.getUsersStorage();
+       return new Promise((resolve, reject) => { 
 
-        if(this.id > 0) { 
+            let promise;
 
-            users.map(u=> { 
+            if(this.id) { 
 
-                if(u._id == this.id) { 
+                promise = HttpRequest.put(`/users/${this.id}`, this.toJSON())
 
-                    Object.assign(u, this);
+            } else { 
+                promise = HttpRequest.post(`/users`, this.toJSON())
+            }
 
-                }
+            promise.then(data=> { 
+                this.loadFromJSON(data)
 
-                return u;
+                resolve(this)
+            }).catch(e=> { 
+                reject(e);
+            })
 
-            });
-         
-        } else { 
+        
+        })
 
-            this._id = this.getNewId();
-
-            users.push(this);
-
-            
-
-        }
-
-        localStorage.setItem("users", JSON.stringify(users) )
+        
 
         
     }
 
     remove(){
-        let users = User.getUsersStorage();
-
-        users.forEach((UserData, index) => { 
-
-            if(this._id == UserData._id) { 
-
-                users.splice(index, 1)
-
-
-            }
-
-
-        });
-
-        localStorage.setItem("users", JSON.stringify(users) )
+     
+        return HttpRequest.delete(`/user/${this.id}`);
     }
 
 }

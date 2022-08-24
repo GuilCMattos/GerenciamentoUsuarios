@@ -51,17 +51,19 @@ class UserController {
 
                     user.loadFromJSON(result);
 
-                    user.save()
+                    user.save().then(user=> { 
 
-                    tr = this.getTr(user, tr);
+                        tr = this.getTr(user, tr);
                   
-                    this.updateCount();
+                        this.updateCount();
 
-                    btn.disabled = false;
+                        btn.disabled = false;
 
-                    this.formUpdateEl.reset();
+                        this.formUpdateEl.reset();
 
-                    btn.disabled = false;
+                        btn.disabled = false;
+                    });
+
 
                 },
                 (e) => {
@@ -94,13 +96,16 @@ class UserController {
                 (content) => {
                     values.photo = content
 
-                    values.save()
+                    values.save().then(user => { 
 
-                    this.addLine(values)
+                        this.addLine(user)
 
-                    this.formEl.reset();
+                        this.formEl.reset();
 
-                    btn.disabled = false;
+                        btn.disabled = false;
+                    })
+
+                    
 
                 },
                 (e) => {
@@ -200,16 +205,19 @@ class UserController {
 
     selectAll() { 
 
-        let users = User.getUsersStorage();
+        User.getUsersStorage().then(data => { 
 
-        users.forEach(dataUser => { 
+            data.users.forEach(dataUser => { 
 
-            let user = new User();
+                let user = new User();
+    
+                user.loadFromJSON(dataUser)
+    
+                this.addLine(user);
+            });
 
-            user.loadFromJSON(dataUser)
-
-            this.addLine(user);
-        })
+        });
+        
 
     }
 
@@ -257,10 +265,15 @@ class UserController {
 
                 user.loadFromJSON(JSON.parse(tr.dataset.user))
 
-                user.remove();
+                user.remove().then(data=> { 
 
-                tr.remove();
-                this.updateCount();
+                    tr.remove();
+
+                    this.updateCount();
+
+                });
+
+               
             }
 
         });

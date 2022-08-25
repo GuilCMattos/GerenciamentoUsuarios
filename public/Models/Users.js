@@ -83,6 +83,7 @@ class User {
 
        return Fetch.get('/users')
 
+
     }
 
 
@@ -108,10 +109,12 @@ class User {
 
             if(this.id) { 
 
+
                 promise = Fetch.put(`/users/${this.id}`, this.toJSON())
 
             } else { 
                 promise = Fetch.post(`/users`, this.toJSON())
+
             }
 
             promise.then(data=> { 
@@ -132,7 +135,9 @@ class User {
 
     remove(){
      
+
         return Fetch.delete(`/users/${this.id}`);
+
     }
 
 }
